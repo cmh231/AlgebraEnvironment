@@ -6,7 +6,8 @@ class Rule:
         self._inputPattern = inputPattern
         self._outputPattern = outputPattern
         if ~self.checkValidRule():
-            raise ValueError("Output pattern and input pattern did not have the necessary co- and contra-variance.")
+            raise ValueError("Arguments of the output pattern specified by the input did not inherit the properties " +
+                             "required by the output pattern.")
 
     def getName(self) -> str:
         return self._name
@@ -18,11 +19,6 @@ class Rule:
         return self._outputPattern
 
     def checkValidRule(self) -> bool:
-        if ~self._outputPattern.getPropertyInheritance().inheritsProperties(
-                [self._inputPattern.getPropertyInheritance()],
-                False
-        ):
-            return False
 
         inputPatternsStruct: tuple[list[Pattern], bool] = self._inputPattern.getPatternsOfIndices()
         outputPatternsStruct: tuple[list[Pattern], bool] = self._inputPattern.getPatternsOfIndices()

@@ -4,6 +4,7 @@ import typing
 
 class Pattern:
     def __init__(self,
+                 name: typing.Union[str, None],
                  propertyInheritance: PropertyInheritance,
                  index: typing.Union[int, None],
                  expression: typing.Union[Expression, None],
@@ -16,11 +17,17 @@ class Pattern:
             if ~propertyInheritance.inheritsProperties([expression.getPropertyInheritance()], False):
                 raise TypeError("Expression " + str(expression) +
                                 " does not inherit from " + str(propertyInheritance) + ".")
-        self._propertyInheritance = propertyInheritance
-        self._index = index
-        self._expression = expression
-        self._childPatterns = childPatterns
-        self._checkLabels = checkLabels
+        if index < 0:
+            raise ValueError("Index cannot be less than 0.")
+        self._name: typing.Union[str, None] = name
+        self._propertyInheritance: PropertyInheritance = propertyInheritance
+        self._index: int = index
+        self._expression: Expression = expression
+        self._childPatterns: list[Pattern] = childPatterns
+        self._checkLabels: bool = checkLabels
+
+    def getName(self) -> typing.Union[str, None]:
+        return self._name
 
     def getPropertyInheritance(self) -> PropertyInheritance:
         return self._propertyInheritance
@@ -28,26 +35,8 @@ class Pattern:
     def getIndex(self) -> typing.Union[int, None]:
         return self._index
 
-    def setIndex(self):
-        raise NotImplementedError
-
     def getExpression(self) -> typing.Union[Expression, None]:
         return self._expression
-
-    # def setExpression(self, expression: typing.Union[Expression, None], recursive: bool = True):
-    #     self._expression = expression
-    #     if expression is not None:
-    #         if ~expression.checkPatternPropertiesQuick(self, self._checkLabels):
-    #             raise TypeError("Expression " + str(expression) + " does not match provided pattern: "
-    #                             + str(self) + ".")
-    #
-    #         if ~expression.patternCollisionCheck(self, self._checkLabels):
-    #             raise TypeError("Expression " + str(expression) + " does not match provided pattern: "
-    #                             + str(self) + ".")
-    #
-    #         self.setIndexWithoutUniqueness(self._index, expression)
-    #
-    #         self._index = None
 
     def getChildPatterns(self) -> list['Pattern']:
         return self._childPatterns
@@ -61,25 +50,6 @@ class Pattern:
 
     def getIndexUniqueness(self) -> bool:
         return len(self.getIndexList()) == len(set(self.getIndexList()))
-
-    # def setIndexWithUniqueness(self, index: int, expression: Expression) -> typing.Union['Pattern', None]:
-    #     if self._index == index:
-    #         self.setExpression(expression)
-    #         return self
-    #
-    #     for pattern in self._childPatterns:
-    #         attemptResult = pattern.setIndexWithUniqueness(index, expression)
-    #         if attemptResult:
-    #             return attemptResult
-    #
-    #     return None
-    #
-    # def setIndexWithoutUniqueness(self, index: int, expression: typing.Union[Expression, None]) -> list['Pattern']:
-    #     if self._index == index:
-    #         self.setExpression(expression, False)
-    #         return [self]
-    #
-    #     return sum((pattern.setIndexWithoutUniqueness(index, expression) for pattern in self._childPatterns), [])
 
     def expressionFromReplacements(self, indexReplacements: list[Expression]) -> Expression:
         if self._index is None and self._expression is None:
@@ -126,5 +96,5 @@ class Pattern:
         return (patternList, True)
 
     def __str__(self) -> str:
-        return "[" + str(self._propertyInheritance) + str(self._index) + "]" + \
+        return "[" + str(self._name) + str(self._index) + "]" + \
                "(" + ", ".join(str(pattern) for pattern in self._childPatterns) + ")"
