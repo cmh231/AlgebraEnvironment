@@ -1,3 +1,5 @@
+from typing import List
+
 class PropertyInheritance:
     """
     Contain details about other properties inherited by a given property.
@@ -12,7 +14,7 @@ class PropertyInheritance:
 
     printHash = False
 
-    def __init__(self, name: str, inheritedProperties: list['PropertyInheritance']):
+    def __init__(self, name: str, inheritedProperties: List['PropertyInheritance']):
         """
         Create a property with a given name and inheriting a list of other properties.
 
@@ -21,7 +23,8 @@ class PropertyInheritance:
         """
 
         self._name: str = name
-        self._inheritedProperties: list['PropertyInheritance'] = inheritedProperties
+        self._inheritedProperties: List['PropertyInheritance'] = inheritedProperties
+        self._fullName = ""
         self._fullName: str = self.getFullName()
         self._propertyHash: int = hash(self._fullName)
 
@@ -49,9 +52,9 @@ class PropertyInheritance:
         return self._propertyHash
 
     def inheritsPropertiesList(self,
-                               properties: list['PropertyInheritance'],
+                               properties: List['PropertyInheritance'],
                                deepCheck: bool = True
-                               ) -> list['PropertyInheritance']:
+                               ) -> List['PropertyInheritance']:
         """
         Take a list of properties and return a list of all from those from that list which this inherits.
 
@@ -74,7 +77,7 @@ class PropertyInheritance:
         return [self] + sum((inheritedProperty.inheritsPropertiesList(properties, deepCheck)
                              for inheritedProperty in self._inheritedProperties), [])
 
-    def inheritsProperties(self, properties: list['PropertyInheritance'], deepCheck: bool = True) -> bool:
+    def inheritsProperties(self, properties: List['PropertyInheritance'], deepCheck: bool = True) -> bool:
         """
         Take a list of properties and return True if they are all found.
 
