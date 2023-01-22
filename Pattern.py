@@ -34,12 +34,12 @@ class Pattern:
 
         # One of expression and index must be equal to None - there's no need to name the variable if it's already
         # been explicitly given.
-        if ~((index is None) | (expression is None)):
+        if not((index is None) | (expression is None)):
             raise TypeError("One of " + str(index) + " or " + str(expression) + " should be None.")
 
         # Check if the expression provided matches its stated properties.
         if expression:
-            if ~propertyInheritance.inheritsProperties([expression.getPropertyInheritance()], False):
+            if not propertyInheritance.inheritsProperties([expression.getPropertyInheritance()], False):
                 raise TypeError("Expression " + str(expression) +
                                 " does not inherit from " + str(propertyInheritance) + ".")
 
@@ -156,7 +156,7 @@ class Pattern:
         # The list we return is guaranteed to be a list of all expressions corresponding to an index. Neither providing
         # an incomplete list, nor missing out necessary indices, would be meaningful, and so an error is thrown. These
         # local checks should be carried out in advance.
-        if ~self.checkExpressionWithPatternProperties(expression):
+        if not self.checkExpressionWithPatternProperties(expression):
             raise ValueError("Self-check failed for expression " + str(expression) + ". Use checkPatternProperties or " +
                              "checkLocalPatternProperties to prevent this issue in future.")
 
@@ -223,7 +223,7 @@ class Pattern:
         if patternName is not None and patternName != expression.getName():
             return False
 
-        if ~expression.getPropertyInheritance().inheritsProperties([self.getPropertyInheritance()], False):
+        if not expression.getPropertyInheritance().inheritsProperties([self.getPropertyInheritance()], False):
             return False
 
         childPatterns = self.getChildPatterns()
@@ -280,14 +280,14 @@ class Pattern:
 
         # If this level isn't compatible, the structure as a whole is incompatible, and no further computation is
         # needed.
-        if ~self.checkExpressionWithPatternProperties(expression):
+        if not self.checkExpressionWithPatternProperties(expression):
             return False
 
         # If a single child is incompatible, so too is the structure as a whole, and, again, no further computation is
         # needed.
         childPatterns = self.getChildPatterns()
         for index in range(len(childPatterns)):
-            if ~childPatterns[index].checkPatternProperties(expression.getExpressions()[index]):
+            if not childPatterns[index].checkPatternProperties(expression.getExpressions()[index]):
                 return False
 
         # If the entire structure has been successfully checked, then the check has succeeded.

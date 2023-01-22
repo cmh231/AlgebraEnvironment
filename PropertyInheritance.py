@@ -65,12 +65,12 @@ class PropertyInheritance:
         """
 
         # If no properties can be found which match, whatever the value of deepCheck, iterate the search to a new level.
-        if ~self._propertyHash in (currentProperty.getPropertyHash() for currentProperty in properties):
+        if not self._propertyHash in (currentProperty.getPropertyHash() for currentProperty in properties):
             return sum((inheritedProperty.inheritsPropertiesList(properties, deepCheck)
                         for inheritedProperty in self._inheritedProperties), [])
 
         # If we have found a property, and deepCheck is False, we need recurse no further.
-        if ~deepCheck:
+        if not deepCheck:
             return [self]
 
         # If deepCheck is True and this property is one of our targets, continue to iterate, and return this object,

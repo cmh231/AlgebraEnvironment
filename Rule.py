@@ -25,7 +25,7 @@ class Rule:
         self._name = name
         self._inputPattern = inputPattern
         self._outputPattern = outputPattern
-        if ~self.checkValidRule():
+        if not self.checkValidRule():
             raise ValueError("Arguments of the output pattern specified by the input did not inherit the properties " +
                              "required by the output pattern.")
 
@@ -54,7 +54,7 @@ class Rule:
         inputPatternsStruct: Tuple[List[Pattern], bool] = self._inputPattern.getPatternsOfIndices()
         outputPatternsStruct: Tuple[List[Pattern], bool] = self._inputPattern.getPatternsOfIndices()
 
-        if ~inputPatternsStruct[1] | ~outputPatternsStruct[1]:
+        if (not inputPatternsStruct[1]) | (not outputPatternsStruct[1]):
             return False
 
         inputPatterns: List[Pattern] = inputPatternsStruct[0]
@@ -70,7 +70,7 @@ class Rule:
             if inputPattern is None:
                 return False
             outputPattern = outputPatterns[index]
-            if ~inputPattern.getPropertyInheritance().inheritsProperties(
+            if not inputPattern.getPropertyInheritance().inheritsProperties(
                     [outputPattern.getPropertyInheritance()],
                     False
             ):
@@ -96,12 +96,12 @@ class Rule:
         outputPattern: Pattern = self.getOutputPattern()
 
         # Perform the basic pattern-matching check.
-        if ~inputPattern.checkPatternProperties(expression):
+        if not inputPattern.checkPatternProperties(expression):
             return expression
 
         # Get the list of replacements, and act on the result of the collision check.
         indexReplacements = inputPattern.getExpressionsFromPattern(expression)
-        if ~indexReplacements[1]:
+        if not indexReplacements[1]:
             return expression
 
         # We're going to need a list. Find how long it will be so we can pre-initialise it. In general, the indices
