@@ -67,9 +67,11 @@ class Rule:
         #      just on the user to avoid this.
         for index in range(len(outputPatterns)):
             inputPattern = inputPatterns[index]
+            outputPattern = outputPatterns[index]
+            if outputPattern is None:
+                return True
             if inputPattern is None:
                 return False
-            outputPattern = outputPatterns[index]
             if not inputPattern.getPropertyInheritance().inheritsProperties(
                     [outputPattern.getPropertyInheritance()],
                     False
@@ -111,7 +113,7 @@ class Rule:
             maxIndex = replacementTuple[0] if replacementTuple[0] > maxIndex else maxIndex
 
         # Initialise an empty array, then proceed to fill it.
-        replacementList: List[typing.Union[Expression, None]] = [None]*maxIndex
+        replacementList: List[typing.Union[Expression, None]] = [None]*(maxIndex + 1)
         for replacementTuple in indexReplacements[0]:
             index = replacementTuple[0]
             replacement = replacementTuple[1]
@@ -121,4 +123,4 @@ class Rule:
 
     def __str__(self) -> str:
         """"""
-        return self._name + ":(" + str(self._inputPattern.getName()) + "->" + str(self._outputPattern.getName()) + ")"
+        return self._name + ":(" + str(self._inputPattern) + "->" + str(self._outputPattern) + ")"

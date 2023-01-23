@@ -37,22 +37,23 @@ class Pattern:
         if not((index is None) | (expression is None)):
             raise TypeError("One of " + str(index) + " or " + str(expression) + " should be None.")
 
+        # Indices can't be less than 0.
+        if index is not None:
+            if index < 0:
+                raise ValueError("Index cannot be less than 0.")
+
+        self._name: typing.Union[str, None] = name
+        self._propertyInheritance: PropertyInheritance = propertyInheritance
+        self._index: typing.Union[int, None] = index
+        self._expression: typing.Union[Expression, None] = expression
+        self._childPatterns: List[Pattern] = childPatterns
+        self._checkLabels: bool = checkLabels
+
         # Check if the expression provided matches its stated properties.
         if expression:
             if not propertyInheritance.inheritsProperties([expression.getPropertyInheritance()], False):
                 raise TypeError("Expression " + str(expression) +
                                 " does not inherit from " + str(propertyInheritance) + ".")
-
-        # Indices can't be less than 0.
-        if index < 0:
-            raise ValueError("Index cannot be less than 0.")
-
-        self._name: typing.Union[str, None] = name
-        self._propertyInheritance: PropertyInheritance = propertyInheritance
-        self._index: int = index
-        self._expression: Expression = expression
-        self._childPatterns: List[Pattern] = childPatterns
-        self._checkLabels: bool = checkLabels
 
     def getName(self) -> typing.Union[str, None]:
         return self._name
@@ -101,7 +102,7 @@ class Pattern:
         for patternEntry in set(rawPatternList):
             maxIndex = patternEntry[0] if patternEntry[0] > maxIndex else maxIndex
 
-        patternList: List[typing.Union['Pattern', None]] = [None]*maxIndex
+        patternList: List[typing.Union['Pattern', None]] = [None]*(maxIndex+1)
         for patternEntry in set(rawPatternList):
             patternList[patternEntry[0]] = patternEntry[1]
 
@@ -177,7 +178,7 @@ class Pattern:
         # Loop through the remaining expressions to check, and combine their results.
         childPatterns: List[Pattern] = self.getChildPatterns()
         for index in range(len(childPatterns)):
-            newExpressions = expression.getExpressions()[index].getExpressionsFromPattern(childPatterns[index])
+            newExpressions = childPatterns[index].getExpressionsFromPattern(expression.getExpressions()[index])
             expressionsRecord = expressionsRecord + newExpressions[0]
             noConflicts = newExpressions[1]
 
@@ -321,5 +322,6 @@ class Pattern:
                    "(" + ", ".join(str(patternCheck) for patternCheck in self._childPatternChecks) + ")"
 
     def __str__(self) -> str:
-        return "[" + str(self._name) + str(self._index) + "]" + \
+        return "[" + str(self._name if self._name is not None else self._propertyInheritance) \
+                   + str(self._index if self._index is not None else "") + "]" + \
                "(" + ", ".join(str(pattern) for pattern in self._childPatterns) + ")"
