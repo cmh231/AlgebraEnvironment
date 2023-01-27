@@ -7,12 +7,7 @@ class PropertyInheritance:
     Equality of instances of this class should be decided based on whether the full names of two objects are found to
     be equal. This enforces the best practice of ensuring that properties with the same inheritance should be given
     distinct names, and allows for different instances of the same property to be directly compared.
-
-    Static Variables:
-    printHash = False - Whether conversion to a string be appended with the hash of the property's inheritance.
     """
-
-    printHash = False
 
     def __init__(self, name: str, inheritedProperties: List['PropertyInheritance']):
         """
@@ -27,6 +22,11 @@ class PropertyInheritance:
         self._fullName = ""
         self._fullName: str = self.getFullName()
         self._propertyHash: int = hash(self._fullName)
+
+    def getName(self):
+        """Get name of property."""
+
+        return self._name
 
     def getPropertyInheritance(self):
         """Get list of properties from which this property directly inherits."""
@@ -89,6 +89,10 @@ class PropertyInheritance:
 
         return properties == self.inheritsPropertiesList(properties, deepCheck)
 
-    def __str__(self) -> str:
-        # Return our name, appending the hash based on the value of printHash.
-        return self._name + (str(self._propertyHash) if PropertyInheritance.printHash else "")
+    def __str__(self, printHash: bool = False) -> str:
+        """
+        Return a string representing this PropertyInheritance object.
+
+        :param printHash: Whether to append the hash of the object for unique identification.
+        """
+        return self._name + (str(self._propertyHash) if printHash else "")

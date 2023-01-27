@@ -217,7 +217,9 @@ class Pattern:
 
         patternExpression: typing.Union[Expression, None] = self.getExpression()
         if patternExpression is not None:
-            if patternExpression != expression:
+            if patternExpression.getExpressionHash() != expression.getExpressionHash():
+                # Recently updated to handle the fact that two instances may be stored at different points in memory and
+                # still refer to the same object.
                 return False
 
         patternName = self.getName()
